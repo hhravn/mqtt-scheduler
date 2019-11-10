@@ -22,6 +22,8 @@ module.exports = class Scheduler {
 
 		this._loadFile();
 
+		this.checkInterval = this.opts.checkInterval || 1000;
+
 		//Handle MQTT host data
 		if(!this.opts.host) throw new Error("Missing required MQTT host server") 
 		this.host = this.opts.host;
@@ -107,7 +109,7 @@ module.exports = class Scheduler {
 	}
 
 	_checkForTasks(done){
-		if(!this.scheduledTasks || this.scheduledTasks.length == 0) return setTimeout(done, 10);
+		if(!this.scheduledTasks || this.scheduledTasks.length == 0) return setTimeout(done, this.checkInterval);
 		var now = new Date()
 		this.scheduledTasks.forEach((task, index)=>{
 			if(task.nextFire <= now){
@@ -116,7 +118,7 @@ module.exports = class Scheduler {
 			}
 		});
 
-		setTimeout(done, 10);
+		setTimeout(done, this.checkInterval);
 	}
 
 	_handleTask(task){
